@@ -1,0 +1,373 @@
+{
+  "nbformat": 4,
+  "nbformat_minor": 0,
+  "metadata": {
+    "colab": {
+      "provenance": []
+    },
+    "kernelspec": {
+      "name": "python3",
+      "display_name": "Python 3"
+    },
+    "language_info": {
+      "name": "python"
+    }
+  },
+  "cells": [
+    {
+      "cell_type": "markdown",
+      "source": [
+        "HW09兩場活動報名整理器"
+      ],
+      "metadata": {
+        "id": "beIzUKRYoqhD"
+      }
+    },
+    {
+      "cell_type": "markdown",
+      "source": [
+        "測試一：原始資料"
+      ],
+      "metadata": {
+        "id": "7Cdt2PCGpDqJ"
+      }
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "# HW09｜兩場活動報名整理器 - 測試一（原始資料）\n",
+        "# 僅使用字串方法、f-string 與 list、tuple、dict、set 基本操作\n",
+        "\n",
+        "# 1. 原始資料（保留 board_raw 與 movie_raw 不被覆蓋）\n",
+        "activity_names = (\"桌遊體驗\", \"電影欣賞\")\n",
+        "board_raw = \" Amy, Ben, amy, Cora \"\n",
+        "movie_raw = \" ben, Dora, ERIC, ben \"\n",
+        "unit_fees = {\"桌遊體驗\": 120, \"電影欣賞\": 80}\n",
+        "\n",
+        "# 2. 讀取活動名稱（使用拆包）\n",
+        "board_name, movie_name = activity_names\n",
+        "\n",
+        "# 3. 移除半形空白、轉小寫並依逗號拆成 list（保留原始順序與重複項目）\n",
+        "board_list = board_raw.replace(\" \", \"\").lower().split(\",\")\n",
+        "movie_list = movie_raw.replace(\" \", \"\").lower().split(\",\")\n",
+        "\n",
+        "# 4. 轉成 set 去重，並進行交集、聯集與雙向差集運算\n",
+        "board_set = set(board_list)\n",
+        "movie_set = set(movie_list)\n",
+        "\n",
+        "both_sorted = sorted(board_set & movie_set)          # 共同參加者（交集）\n",
+        "all_sorted = sorted(board_set | movie_set)           # 全部參加者（聯集）\n",
+        "board_only_sorted = sorted(board_set - movie_set)    # 只參加桌遊者（差集：桌遊 - 電影）\n",
+        "movie_only_sorted = sorted(movie_set - board_set)    # 只參加電影者（差集：電影 - 桌遊）\n",
+        "\n",
+        "# 5. 建立通知名單預覽（全部參加者排序後取前兩位）\n",
+        "notify_preview = all_sorted[:2]\n",
+        "\n",
+        "# 6. 計算人數與應收費用，存入 summary 字典（金額保留為數值）\n",
+        "board_count = len(board_set)\n",
+        "movie_count = len(movie_set)\n",
+        "both_count = len(both_sorted)\n",
+        "total_unique_count = len(all_sorted)\n",
+        "total_registrations = board_count + movie_count\n",
+        "\n",
+        "board_revenue = board_count * unit_fees[board_name]\n",
+        "movie_revenue = movie_count * unit_fees[movie_name]\n",
+        "total_revenue = board_revenue + movie_revenue\n",
+        "\n",
+        "summary = {\n",
+        "    \"board_count\": board_count,\n",
+        "    \"movie_count\": movie_count,\n",
+        "    \"both_count\": both_count,\n",
+        "    \"total_unique_count\": total_unique_count,\n",
+        "    \"total_registrations\": total_registrations,\n",
+        "    \"board_revenue\": board_revenue,\n",
+        "    \"movie_revenue\": movie_revenue,\n",
+        "    \"total_revenue\": total_revenue,\n",
+        "}\n",
+        "\n",
+        "# 7. 輸出完整摘要\n",
+        "print(\"HW09 活動報名摘要\")\n",
+        "print(f\"活動：{board_name}，每人 {unit_fees[board_name]:.2f} 元\")\n",
+        "print(f\"活動：{movie_name}，每人 {unit_fees[movie_name]:.2f} 元\")\n",
+        "print(f\"桌遊整理串列：{board_list}\")\n",
+        "print(f\"電影整理串列：{movie_list}\")\n",
+        "print(f\"桌遊去重名單：{sorted(board_set)}\")\n",
+        "print(f\"電影去重名單：{sorted(movie_set)}\")\n",
+        "print(f\"桌遊人數：{summary['board_count']} 人\")\n",
+        "print(f\"電影人數：{summary['movie_count']} 人\")\n",
+        "print(f\"共同參加者：{both_sorted}\")\n",
+        "print(f\"共同人數：{summary['both_count']} 人\")\n",
+        "print(f\"只參加桌遊者：{board_only_sorted}\")\n",
+        "print(f\"只參加電影者：{movie_only_sorted}\")\n",
+        "print(f\"全部參加者：{all_sorted}\")\n",
+        "print(f\"總不重複人數：{summary['total_unique_count']} 人\")\n",
+        "print(f\"報名人次：{summary['total_registrations']} 人次\")\n",
+        "print(f\"通知名單前兩位：{notify_preview}\")\n",
+        "print(f\"桌遊應收：{summary['board_revenue']:.2f} 元\")\n",
+        "print(f\"電影應收：{summary['movie_revenue']:.2f} 元\")\n",
+        "print(f\"總應收：{summary['total_revenue']:.2f} 元\")"
+      ],
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "Mgz3dD4ipoPe",
+        "outputId": "77d2155e-2198-4437-8bfb-db65c5f99352"
+      },
+      "execution_count": 1,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "HW09 活動報名摘要\n",
+            "活動：桌遊體驗，每人 120.00 元\n",
+            "活動：電影欣賞，每人 80.00 元\n",
+            "桌遊整理串列：['amy', 'ben', 'amy', 'cora']\n",
+            "電影整理串列：['ben', 'dora', 'eric', 'ben']\n",
+            "桌遊去重名單：['amy', 'ben', 'cora']\n",
+            "電影去重名單：['ben', 'dora', 'eric']\n",
+            "桌遊人數：3 人\n",
+            "電影人數：3 人\n",
+            "共同參加者：['ben']\n",
+            "共同人數：1 人\n",
+            "只參加桌遊者：['amy', 'cora']\n",
+            "只參加電影者：['dora', 'eric']\n",
+            "全部參加者：['amy', 'ben', 'cora', 'dora', 'eric']\n",
+            "總不重複人數：5 人\n",
+            "報名人次：6 人次\n",
+            "通知名單前兩位：['amy', 'ben']\n",
+            "桌遊應收：360.00 元\n",
+            "電影應收：240.00 元\n",
+            "總應收：600.00 元\n"
+          ]
+        }
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "source": [
+        "測試二：新增一位電影參加者\n",
+        "\n"
+      ],
+      "metadata": {
+        "id": "29SMURALpwCK"
+      }
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "# 測試二：新增一位電影參加者\n",
+        "activity_names = (\"桌遊體驗\", \"電影欣賞\")\n",
+        "board_raw = \" Amy, Ben, amy, Cora \"\n",
+        "movie_raw = \" ben, Dora, ERIC, ben, Frank \"\n",
+        "unit_fees = {\"桌遊體驗\": 120, \"電影欣賞\": 80}\n",
+        "\n",
+        "board_name, movie_name = activity_names\n",
+        "\n",
+        "board_list = board_raw.replace(\" \", \"\").lower().split(\",\")\n",
+        "movie_list = movie_raw.replace(\" \", \"\").lower().split(\",\")\n",
+        "\n",
+        "board_set = set(board_list)\n",
+        "movie_set = set(movie_list)\n",
+        "\n",
+        "both_sorted = sorted(board_set & movie_set)\n",
+        "all_sorted = sorted(board_set | movie_set)\n",
+        "board_only_sorted = sorted(board_set - movie_set)\n",
+        "movie_only_sorted = sorted(movie_set - board_set)\n",
+        "\n",
+        "notify_preview = all_sorted[:2]\n",
+        "\n",
+        "board_count = len(board_set)\n",
+        "movie_count = len(movie_set)\n",
+        "both_count = len(both_sorted)\n",
+        "total_unique_count = len(all_sorted)\n",
+        "total_registrations = board_count + movie_count\n",
+        "\n",
+        "board_revenue = board_count * unit_fees[board_name]\n",
+        "movie_revenue = movie_count * unit_fees[movie_name]\n",
+        "total_revenue = board_revenue + movie_revenue\n",
+        "\n",
+        "summary = {\n",
+        "    \"board_count\": board_count,\n",
+        "    \"movie_count\": movie_count,\n",
+        "    \"both_count\": both_count,\n",
+        "    \"total_unique_count\": total_unique_count,\n",
+        "    \"total_registrations\": total_registrations,\n",
+        "    \"board_revenue\": board_revenue,\n",
+        "    \"movie_revenue\": movie_revenue,\n",
+        "    \"total_revenue\": total_revenue,\n",
+        "}\n",
+        "\n",
+        "print(\"HW09 活動報名摘要\")\n",
+        "print(f\"活動：{board_name}，每人 {unit_fees[board_name]:.2f} 元\")\n",
+        "print(f\"活動：{movie_name}，每人 {unit_fees[movie_name]:.2f} 元\")\n",
+        "print(f\"桌遊整理串列：{board_list}\")\n",
+        "print(f\"電影整理串列：{movie_list}\")\n",
+        "print(f\"桌遊去重名單：{sorted(board_set)}\")\n",
+        "print(f\"電影去重名單：{sorted(movie_set)}\")\n",
+        "print(f\"桌遊人數：{summary['board_count']} 人\")\n",
+        "print(f\"電影人數：{summary['movie_count']} 人\")\n",
+        "print(f\"共同參加者：{both_sorted}\")\n",
+        "print(f\"共同人數：{summary['both_count']} 人\")\n",
+        "print(f\"只參加桌遊者：{board_only_sorted}\")\n",
+        "print(f\"只參加電影者：{movie_only_sorted}\")\n",
+        "print(f\"全部參加者：{all_sorted}\")\n",
+        "print(f\"總不重複人數：{summary['total_unique_count']} 人\")\n",
+        "print(f\"報名人次：{summary['total_registrations']} 人次\")\n",
+        "print(f\"通知名單前兩位：{notify_preview}\")\n",
+        "print(f\"桌遊應收：{summary['board_revenue']:.2f} 元\")\n",
+        "print(f\"電影應收：{summary['movie_revenue']:.2f} 元\")\n",
+        "print(f\"總應收：{summary['total_revenue']:.2f} 元\")"
+      ],
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "gP8sYBtVq2i5",
+        "outputId": "c6aa01ef-62c4-4c67-d838-f312ae969e3e"
+      },
+      "execution_count": 2,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "HW09 活動報名摘要\n",
+            "活動：桌遊體驗，每人 120.00 元\n",
+            "活動：電影欣賞，每人 80.00 元\n",
+            "桌遊整理串列：['amy', 'ben', 'amy', 'cora']\n",
+            "電影整理串列：['ben', 'dora', 'eric', 'ben', 'frank']\n",
+            "桌遊去重名單：['amy', 'ben', 'cora']\n",
+            "電影去重名單：['ben', 'dora', 'eric', 'frank']\n",
+            "桌遊人數：3 人\n",
+            "電影人數：4 人\n",
+            "共同參加者：['ben']\n",
+            "共同人數：1 人\n",
+            "只參加桌遊者：['amy', 'cora']\n",
+            "只參加電影者：['dora', 'eric', 'frank']\n",
+            "全部參加者：['amy', 'ben', 'cora', 'dora', 'eric', 'frank']\n",
+            "總不重複人數：6 人\n",
+            "報名人次：7 人次\n",
+            "通知名單前兩位：['amy', 'ben']\n",
+            "桌遊應收：360.00 元\n",
+            "電影應收：320.00 元\n",
+            "總應收：680.00 元\n"
+          ]
+        }
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "source": [
+        "測試三：兩場去重後完全相同"
+      ],
+      "metadata": {
+        "id": "E8C1qCt6q4fn"
+      }
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "# 測試三：兩場去重後完全相同\n",
+        "activity_names = (\"桌遊體驗\", \"電影欣賞\")\n",
+        "board_raw = \" Amy, Ben, amy, Cora \"\n",
+        "movie_raw = \" AMY, ben, CORA, amy \"\n",
+        "unit_fees = {\"桌遊體驗\": 120, \"電影欣賞\": 80}\n",
+        "\n",
+        "board_name, movie_name = activity_names\n",
+        "\n",
+        "board_list = board_raw.replace(\" \", \"\").lower().split(\",\")\n",
+        "movie_list = movie_raw.replace(\" \", \"\").lower().split(\",\")\n",
+        "\n",
+        "board_set = set(board_list)\n",
+        "movie_set = set(movie_list)\n",
+        "\n",
+        "both_sorted = sorted(board_set & movie_set)\n",
+        "all_sorted = sorted(board_set | movie_set)\n",
+        "board_only_sorted = sorted(board_set - movie_set)\n",
+        "movie_only_sorted = sorted(movie_set - board_set)\n",
+        "\n",
+        "notify_preview = all_sorted[:2]\n",
+        "\n",
+        "board_count = len(board_set)\n",
+        "movie_count = len(movie_set)\n",
+        "both_count = len(both_sorted)\n",
+        "total_unique_count = len(all_sorted)\n",
+        "total_registrations = board_count + movie_count\n",
+        "\n",
+        "board_revenue = board_count * unit_fees[board_name]\n",
+        "movie_revenue = movie_count * unit_fees[movie_name]\n",
+        "total_revenue = board_revenue + movie_revenue\n",
+        "\n",
+        "summary = {\n",
+        "    \"board_count\": board_count,\n",
+        "    \"movie_count\": movie_count,\n",
+        "    \"both_count\": both_count,\n",
+        "    \"total_unique_count\": total_unique_count,\n",
+        "    \"total_registrations\": total_registrations,\n",
+        "    \"board_revenue\": board_revenue,\n",
+        "    \"movie_revenue\": movie_revenue,\n",
+        "    \"total_revenue\": total_revenue,\n",
+        "}\n",
+        "\n",
+        "print(\"HW09 活動報名摘要\")\n",
+        "print(f\"活動：{board_name}，每人 {unit_fees[board_name]:.2f} 元\")\n",
+        "print(f\"活動：{movie_name}，每人 {unit_fees[movie_name]:.2f} 元\")\n",
+        "print(f\"桌遊整理串列：{board_list}\")\n",
+        "print(f\"電影整理串列：{movie_list}\")\n",
+        "print(f\"桌遊去重名單：{sorted(board_set)}\")\n",
+        "print(f\"電影去重名單：{sorted(movie_set)}\")\n",
+        "print(f\"桌遊人數：{summary['board_count']} 人\")\n",
+        "print(f\"電影人數：{summary['movie_count']} 人\")\n",
+        "print(f\"共同參加者：{both_sorted}\")\n",
+        "print(f\"共同人數：{summary['both_count']} 人\")\n",
+        "print(f\"只參加桌遊者：{board_only_sorted}\")\n",
+        "print(f\"只參加電影者：{movie_only_sorted}\")\n",
+        "print(f\"全部參加者：{all_sorted}\")\n",
+        "print(f\"總不重複人數：{summary['total_unique_count']} 人\")\n",
+        "print(f\"報名人次：{summary['total_registrations']} 人次\")\n",
+        "print(f\"通知名單前兩位：{notify_preview}\")\n",
+        "print(f\"桌遊應收：{summary['board_revenue']:.2f} 元\")\n",
+        "print(f\"電影應收：{summary['movie_revenue']:.2f} 元\")\n",
+        "print(f\"總應收：{summary['total_revenue']:.2f} 元\")"
+      ],
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "urmn0k2Zq8Fk",
+        "outputId": "2ff7f38b-18a0-488d-f023-c4c32a8bfbf5"
+      },
+      "execution_count": 3,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "HW09 活動報名摘要\n",
+            "活動：桌遊體驗，每人 120.00 元\n",
+            "活動：電影欣賞，每人 80.00 元\n",
+            "桌遊整理串列：['amy', 'ben', 'amy', 'cora']\n",
+            "電影整理串列：['amy', 'ben', 'cora', 'amy']\n",
+            "桌遊去重名單：['amy', 'ben', 'cora']\n",
+            "電影去重名單：['amy', 'ben', 'cora']\n",
+            "桌遊人數：3 人\n",
+            "電影人數：3 人\n",
+            "共同參加者：['amy', 'ben', 'cora']\n",
+            "共同人數：3 人\n",
+            "只參加桌遊者：[]\n",
+            "只參加電影者：[]\n",
+            "全部參加者：['amy', 'ben', 'cora']\n",
+            "總不重複人數：3 人\n",
+            "報名人次：6 人次\n",
+            "通知名單前兩位：['amy', 'ben']\n",
+            "桌遊應收：360.00 元\n",
+            "電影應收：240.00 元\n",
+            "總應收：600.00 元\n"
+          ]
+        }
+      ]
+    }
+  ]
+}
